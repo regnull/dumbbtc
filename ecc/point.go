@@ -43,5 +43,23 @@ func (p *Point) Add(other *Point) *Point {
 	if p.x == other.x {
 		return NewInf(p.a, p.b)
 	}
-	return nil
+
+	if p.Equal(other) {
+		// Two points are the same.
+
+		if p.y == 0 {
+			// Vertical line.
+			return NewInf(p.a, p.b)
+		}
+
+		s := (3*p.x*p.x + p.a) / 2 / p.y
+		x := s*s - 2*p.x
+		y := s*(p.x-x) - p.y
+		return NewPoint(x, y, p.a, p.b)
+	}
+
+	s := (other.y - p.y) / (other.x - p.x)
+	x := s*s - other.x - p.x
+	y := s*(p.x-x) - p.y
+	return NewPoint(x, y, p.a, p.b)
 }

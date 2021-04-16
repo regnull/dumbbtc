@@ -50,4 +50,7 @@ func TestPointAdd(t *testing.T) {
 
 	inf1 := a.Add(b)
 	assert.Equal(inf, inf1)
+
+	c := NewPoint(2, 5, 5, 7)
+	assert.Equal(NewPoint(3, -7, 5, 7), c.Add(a))
 }
