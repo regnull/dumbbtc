@@ -36,26 +36,26 @@ func (fe *FieldElement) Add(x *FieldElement) *FieldElement {
 	if fe.prime != x.prime {
 		panic("bad number")
 	}
-	return NewFieldElement((fe.num+x.num)%fe.prime, fe.prime)
+	return NewFieldElement(mod((fe.num+x.num), fe.prime), fe.prime)
 }
 
 func (fe *FieldElement) Subtract(x *FieldElement) *FieldElement {
 	if fe.prime != x.prime {
 		panic("bad number")
 	}
-	return NewFieldElement((fe.num-x.num)%fe.prime, fe.prime)
+	return NewFieldElement(mod((fe.num-x.num), fe.prime), fe.prime)
 }
 
 func (fe *FieldElement) Multiply(x *FieldElement) *FieldElement {
 	if fe.prime != x.prime {
 		panic("bad number")
 	}
-	return NewFieldElement((fe.num*x.num)%fe.prime, fe.prime)
+	return NewFieldElement(mod((fe.num*x.num), fe.prime), fe.prime)
 }
 
 func (fe *FieldElement) Pow(e int) *FieldElement {
-	n := e % (fe.prime - 1)
-	return NewFieldElement(int(math.Pow(float64(fe.num), float64(n)))%fe.prime, fe.prime)
+	n := mod(e, (fe.prime - 1))
+	return NewFieldElement(mod(int(math.Pow(float64(fe.num), float64(n))), fe.prime), fe.prime)
 }
 
 func (fe *FieldElement) Divide(x *FieldElement) *FieldElement {
