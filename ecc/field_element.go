@@ -2,66 +2,87 @@ package ecc
 
 import (
 	"fmt"
-	"math"
+	"math/big"
 )
 
 type FieldElement struct {
-	num   int
-	prime int
+	num   *big.Int
+	prime *big.Int
 }
 
-func NewFieldElement(num, prime int) *FieldElement {
-	if num >= prime || num < 0 {
+var zero = big.NewInt(0)
+
+func NewFieldElement(num, prime *big.Int) *FieldElement {
+	if num.Cmp(prime) >= 0 || num.Cmp(zero) < 0 {
 		panic("bad number")
 	}
 	return &FieldElement{num: num, prime: prime}
 }
 
-func (fe *FieldElement) String() string {
-	return fmt.Sprintf("FieldElement_%d (%d)", fe.num, fe.prime)
+func NewFieldElementFromInt(num, prime int64) *FieldElement {
+	return NewFieldElement(big.NewInt(num), big.NewInt(prime))
 }
 
-func (fe *FieldElement) Equal(x *FieldElement) bool {
-	if x == nil {
+func (fe *FieldElement) String() string {
+	return fmt.Sprintf("FieldElement_%s (%s)", fe.num.String(), fe.prime.String())
+}
+
+func (fe *FieldElement) Equal(other *FieldElement) bool {
+	if other == nil {
 		return false
 	}
-	return fe.num == x.num && fe.prime == x.prime
+
+	return fe.num.Cmp(other.num) == 0 && fe.prime.Cmp(other.prime) == 0
 }
 
-func (fe *FieldElement) NotEqual(x *FieldElement) bool {
-	return !fe.Equal(x)
+func (fe *FieldElement) NotEqual(other *FieldElement) bool {
+	return !fe.Equal(other)
 }
 
-func (fe *FieldElement) Add(x *FieldElement) *FieldElement {
-	if fe.prime != x.prime {
-		panic("bad number")
-	}
-	return NewFieldElement(mod((fe.num+x.num), fe.prime), fe.prime)
-}
-
-func (fe *FieldElement) Subtract(x *FieldElement) *FieldElement {
-	if fe.prime != x.prime {
-		panic("bad number")
-	}
-	return NewFieldElement(mod((fe.num-x.num), fe.prime), fe.prime)
-}
-
-func (fe *FieldElement) Multiply(x *FieldElement) *FieldElement {
-	if fe.prime != x.prime {
-		panic("bad number")
-	}
-	return NewFieldElement(mod((fe.num*x.num), fe.prime), fe.prime)
-}
-
-func (fe *FieldElement) Pow(e int) *FieldElement {
-	n := mod(e, (fe.prime - 1))
-	return NewFieldElement(mod(int(math.Pow(float64(fe.num), float64(n))), fe.prime), fe.prime)
-}
-
-func (fe *FieldElement) Divide(x *FieldElement) *FieldElement {
-	if fe.prime != x.prime || x.num == 0 {
+func (fe *FieldElement) Add(other *FieldElement) *FieldElement {
+	if fe.prime.Cmp(other.prime) != 0 {
 		panic("bad number")
 	}
 
-	return fe.Multiply(x.Pow(x.prime - 2))
+	r := new(big.Int)
+	r.Add(fe.num, other.num)
+	r.Mod(r, fe.prime)
+	return NewFieldElement(r, fe.prime)
+}
+
+func (fe *FieldElement) Sub(other *FieldElement) *FieldElement {
+	if fe.prime.Cmp(other.prime) != 0 {
+		panic("bad number")
+	}
+
+	r := new(big.Int)
+	r.Sub(fe.num, other.num)
+	r.Mod(r, fe.prime)
+	return NewFieldElement(r, fe.prime)
+}
+
+func (fe *FieldElement) Mul(other *FieldElement) *FieldElement {
+	if fe.prime.Cmp(other.prime) != 0 {
+		panic("bad number")
+	}
+	r := new(big.Int)
+	r.Mul(fe.num, other.num)
+	r.Mod(r, fe.prime)
+	return NewFieldElement(r, fe.prime)
+}
+
+func (fe *FieldElement) Pow(exp *big.Int) *FieldElement {
+	n := new(big.Int)
+	n.Mod(exp, new(big.Int).Sub(fe.prime, big.NewInt(1)))
+	r := new(big.Int)
+	r.Exp(fe.num, n, fe.prime)
+	return NewFieldElement(r, fe.prime)
+}
+
+func (fe *FieldElement) Div(other *FieldElement) *FieldElement {
+	if fe.prime.Cmp(other.prime) != 0 {
+		panic("bad number")
+	}
+
+	return fe.Mul(other.Pow(new(big.Int).Sub(other.prime, big.NewInt(2))))
 }
