@@ -19,6 +19,14 @@ func NewPoint(x, y, a, b Number) *Point {
 	return &Point{x: x, y: y, a: a, b: b}
 }
 
+func NewPointCopy(p *Point) *Point {
+	a1 := p.a.Copy()
+	b1 := p.b.Copy()
+	x1 := p.x.Copy()
+	y1 := p.y.Copy()
+	return NewPoint(x1, y1, a1, b1)
+}
+
 func NewInf(a, b Number) *Point {
 	return &Point{x: nil, y: nil, a: a, b: b}
 }
@@ -64,17 +72,29 @@ func (p *Point) Add(other *Point) *Point {
 		x := s.Pow(big.NewInt(2)).Sub(p.x.MulScalar(big.NewInt(2)))
 		y := s.Mul(p.x.Sub(x)).Sub(p.y)
 
-		//s := (3*p.x*p.x + p.a) / 2 / p.y
-		//x := s*s - 2*p.x
-		//y := s*(p.x-x) - p.y
 		return NewPoint(x, y, p.a, p.b)
 	}
 
 	s := other.y.Sub(p.y).Div(other.x.Sub(p.x))
-	//s := (other.y - p.y) / (other.x - p.x)
 	x := s.Pow(big.NewInt(2)).Sub(other.x).Sub(p.x)
-	//x := s*s - other.x - p.x
 	y := s.Mul(p.x.Sub(x)).Sub(p.y)
-	//y := s*(p.x-x) - p.y
 	return NewPoint(x, y, p.a, p.b)
+}
+
+func (p *Point) Mul(factor *big.Int) *Point {
+	f := new(big.Int)
+	f.Set(factor)
+	current := NewPointCopy(p)
+	res := NewInf(p.a, p.b)
+	zero := big.NewInt(0)
+	one := big.NewInt(1)
+	for f.Cmp(zero) > 0 {
+		x := new(big.Int)
+		if x.And(f, one).Cmp(zero) != 0 {
+			res = res.Add(current)
+		}
+		current = current.Add(current)
+		f.Rsh(f, 1)
+	}
+	return res
 }

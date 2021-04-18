@@ -113,3 +113,11 @@ func (fe *FieldElement) Div(other Number) Number {
 
 	return fe.Mul(other.Pow(new(big.Int).Sub(otherFieldElement.prime, big.NewInt(2))))
 }
+
+func (fe *FieldElement) Copy() Number {
+	n1 := new(big.Int)
+	n1.Set(fe.num)
+	p1 := new(big.Int)
+	p1.Set(fe.prime)
+	return NewFieldElement(n1, p1)
+}

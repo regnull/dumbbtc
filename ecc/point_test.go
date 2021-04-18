@@ -1,6 +1,7 @@
 package ecc
 
 import (
+	"math/big"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -53,4 +54,14 @@ func TestPointAdd(t *testing.T) {
 
 	c := NewPoint(NewInt64(2), NewInt64(5), NewInt64(5), NewInt64(7))
 	assert.Equal(NewPoint(NewInt64(3), NewInt64(-7), NewInt64(5), NewInt64(7)), c.Add(a))
+}
+
+func TestPointMul(t *testing.T) {
+	assert := assert.New(t)
+
+	a := NewPoint(NewInt64(-1), NewInt64(-1), NewInt64(5), NewInt64(7))
+	a3 := a.Add(a).Add(a)
+
+	at3 := a.Mul(big.NewInt(3))
+	assert.Equal(a3, at3)
 }

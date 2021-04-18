@@ -15,6 +15,7 @@ type Number interface {
 	MulScalar(*big.Int) Number
 	Pow(*big.Int) Number
 	Div(Number) Number
+	Copy() Number
 }
 
 type Int64 struct {
@@ -79,4 +80,8 @@ func (i *Int64) Div(other Number) Number {
 		panic("wrong type")
 	}
 	return &Int64{num: i.num / otherInt64.num}
+}
+
+func (i *Int64) Copy() Number {
+	return &Int64{num: i.num}
 }
