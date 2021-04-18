@@ -62,15 +62,33 @@ func TestFieldElementPointotherFieldElement(t *testing.T) {
 	assert.True(inf.IsInf())
 }
 
+type testVal struct {
+	x, y int64
+}
+
 func TestFieldElementAdd(t *testing.T) {
 	assert := assert.New(t)
 
+	tests := []struct {
+		one, two, res testVal
+	}{
+		{testVal{192, 105}, testVal{17, 56}, testVal{170, 142}},
+		{testVal{170, 142}, testVal{60, 139}, testVal{220, 181}},
+		{testVal{47, 71}, testVal{17, 56}, testVal{215, 68}},
+		{testVal{143, 98}, testVal{76, 66}, testVal{47, 71}},
+	}
+
 	prime := big.NewInt(223)
-	a := NewFieldElement(big.NewInt(0), prime)
-	b := NewFieldElement(big.NewInt(7), prime)
-	p1 := NewPoint(NewFieldElement(big.NewInt(192), prime),
-		NewFieldElement(big.NewInt(105), prime), a, b)
-	p2 := NewPoint(NewFieldElement(big.NewInt(17), prime), NewFieldElement(big.NewInt(56), prime), a, b)
-	p3 := p1.Add(p2)
-	assert.Equal(NewPoint(NewFieldElement(big.NewInt(170), prime), NewFieldElement(big.NewInt(142), prime), a, b), p3)
+	for _, test := range tests {
+		a := NewFieldElement(big.NewInt(0), prime)
+		b := NewFieldElement(big.NewInt(7), prime)
+		p1 := NewPoint(NewFieldElement(big.NewInt(test.one.x), prime),
+			NewFieldElement(big.NewInt(test.one.y), prime), a, b)
+		p2 := NewPoint(NewFieldElement(big.NewInt(test.two.x), prime),
+			NewFieldElement(big.NewInt(test.two.y), prime), a, b)
+		p3 := p1.Add(p2)
+		assert.Equal(NewPoint(NewFieldElement(big.NewInt(test.res.x), prime),
+			NewFieldElement(big.NewInt(test.res.y), prime), a, b), p3)
+	}
+
 }
