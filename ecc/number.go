@@ -12,7 +12,7 @@ type Number interface {
 	Add(Number) Number
 	Sub(Number) Number
 	Mul(Number) Number
-	MulScalar(int64) Number
+	MulScalar(*big.Int) Number
 	Pow(*big.Int) Number
 	Div(Number) Number
 }
@@ -65,8 +65,8 @@ func (i *Int64) Mul(other Number) Number {
 	return &Int64{num: i.num * otherInt64.num}
 }
 
-func (i *Int64) MulScalar(x int64) Number {
-	return &Int64{num: i.num * x}
+func (i *Int64) MulScalar(x *big.Int) Number {
+	return &Int64{num: i.num * x.Int64()}
 }
 
 func (i *Int64) Pow(exp *big.Int) Number {

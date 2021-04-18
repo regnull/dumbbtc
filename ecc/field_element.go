@@ -87,9 +87,9 @@ func (fe *FieldElement) Mul(other Number) Number {
 	return NewFieldElement(r, fe.prime)
 }
 
-func (fe *FieldElement) MulScalar(x int64) Number {
+func (fe *FieldElement) MulScalar(x *big.Int) Number {
 	r := new(big.Int)
-	r.Mul(fe.num, big.NewInt(x))
+	r.Mul(fe.num, x)
 	r.Mod(r, fe.prime)
 	return NewFieldElement(r, fe.prime)
 }

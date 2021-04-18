@@ -59,8 +59,9 @@ func (p *Point) Add(other *Point) *Point {
 			return NewInf(p.a, p.b)
 		}
 
-		s := p.x.Pow(big.NewInt(2)).MulScalar(3).Add(p.a).Div(p.y.MulScalar(2))
-		x := s.Pow(big.NewInt(2)).Sub(p.x.MulScalar(2))
+		s := p.x.Pow(big.NewInt(2)).MulScalar(big.NewInt(3)).
+			Add(p.a).Div(p.y.MulScalar(big.NewInt(2)))
+		x := s.Pow(big.NewInt(2)).Sub(p.x.MulScalar(big.NewInt(2)))
 		y := s.Mul(p.x.Sub(x)).Sub(p.y)
 
 		//s := (3*p.x*p.x + p.a) / 2 / p.y
