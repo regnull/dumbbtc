@@ -23,6 +23,10 @@ func NewFieldElementFromInt(num, prime int64) *FieldElement {
 	return NewFieldElement(big.NewInt(num), big.NewInt(prime))
 }
 
+func (fe *FieldElement) Num() *big.Int {
+	return fe.num
+}
+
 func (fe *FieldElement) String() string {
 	return fmt.Sprintf("FieldElement_%s (%s)", fe.num.String(), fe.prime.String())
 }

@@ -10,9 +10,9 @@ import (
 func TestCurve(t *testing.T) {
 	assert := assert.New(t)
 
-	x := ecc.NewFieldElement(gx, p)
-	y := ecc.NewFieldElement(gy, p)
-	point := ecc.NewPoint(x, y, ecc.NewFieldElement(a, p), ecc.NewFieldElement(b, p))
-	p1 := point.Mul(n)
+	x := ecc.NewFieldElement(CurveParams.Gx, CurveParams.P)
+	y := ecc.NewFieldElement(CurveParams.Gy, CurveParams.P)
+	point := ecc.NewPoint(x, y, ecc.NewFieldElement(CurveParams.A, CurveParams.P), ecc.NewFieldElement(CurveParams.B, CurveParams.P))
+	p1 := point.Mul(CurveParams.N)
 	assert.True(p1.IsInf())
 }
