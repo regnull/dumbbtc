@@ -1,6 +1,7 @@
 package ecc
 
 import (
+	"fmt"
 	"math/big"
 )
 
@@ -12,7 +13,7 @@ type Point struct {
 }
 
 func NewPoint(x, y, a, b Number) *Point {
-	if y.Pow(big.NewInt(2)).NotEqual(x.Pow(big.NewInt(3)).Add(a.Mul(x).Add(b))) {
+	if y.Pow(big.NewInt(2)).NotEqual(x.Pow(big.NewInt(3)).Add(a.Mul(x)).Add(b)) {
 		panic("point not on curve")
 	}
 
@@ -29,6 +30,13 @@ func NewPointCopy(p *Point) *Point {
 
 func NewInf(a, b Number) *Point {
 	return &Point{x: nil, y: nil, a: a, b: b}
+}
+
+func (p *Point) String() string {
+	if p.IsInf() {
+		return fmt.Sprintf("Point: inf")
+	}
+	return fmt.Sprintf("Point: %s, %s", p.x.String(), p.y.String())
 }
 
 func (p *Point) IsInf() bool {
@@ -54,11 +62,6 @@ func (p *Point) Add(other *Point) *Point {
 		return &Point{a: p.a, b: p.b, x: p.x, y: p.y}
 	}
 
-	if p.x.Equal(other.x) {
-		// Two points form a vertical line.
-		return NewInf(p.a, p.b)
-	}
-
 	if p.Equal(other) {
 		// Two points are the same.
 
@@ -73,6 +76,11 @@ func (p *Point) Add(other *Point) *Point {
 		y := s.Mul(p.x.Sub(x)).Sub(p.y)
 
 		return NewPoint(x, y, p.a, p.b)
+	}
+
+	if p.x.Equal(other.x) {
+		// Two points form a vertical line.
+		return NewInf(p.a, p.b)
 	}
 
 	s := other.y.Sub(p.y).Div(other.x.Sub(p.x))

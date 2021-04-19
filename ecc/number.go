@@ -1,6 +1,7 @@
 package ecc
 
 import (
+	"fmt"
 	"math"
 	"math/big"
 )
@@ -16,6 +17,7 @@ type Number interface {
 	Pow(*big.Int) Number
 	Div(Number) Number
 	Copy() Number
+	String() string
 }
 
 type Int64 struct {
@@ -84,4 +86,8 @@ func (i *Int64) Div(other Number) Number {
 
 func (i *Int64) Copy() Number {
 	return &Int64{num: i.num}
+}
+
+func (i *Int64) String() string {
+	return fmt.Sprintf("%d", i)
 }
