@@ -3,12 +3,14 @@ package secp256k1
 import "math/big"
 
 type CurveParamsStruct struct {
-	P  *big.Int
-	A  *big.Int
-	B  *big.Int
-	Gx *big.Int
-	Gy *big.Int
-	N  *big.Int
+	P       *big.Int
+	A       *big.Int
+	B       *big.Int
+	Gx      *big.Int
+	Gy      *big.Int
+	N       *big.Int
+	NMinus2 *big.Int
+	G       *S256Point
 }
 
 var CurveParams *CurveParamsStruct
@@ -21,4 +23,10 @@ func init() {
 	CurveParams.Gx, _ = new(big.Int).SetString("79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798", 16)
 	CurveParams.Gy, _ = new(big.Int).SetString("483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8", 16)
 	CurveParams.N, _ = new(big.Int).SetString("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141", 16)
+	CurveParams.NMinus2 = new(big.Int).Sub(CurveParams.N, big.NewInt(2))
+	CurveParams.G = NewS256Point(NewS256Element(CurveParams.Gx), NewS256Element(CurveParams.Gy))
+}
+
+func Inverse(x *big.Int) *big.Int {
+	return new(big.Int).Exp(x, CurveParams.NMinus2, CurveParams.N)
 }

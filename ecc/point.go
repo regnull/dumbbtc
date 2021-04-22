@@ -6,13 +6,13 @@ import (
 )
 
 type Point struct {
-	a Number
-	b Number
-	x Number
-	y Number
+	a *FieldElement
+	b *FieldElement
+	x *FieldElement
+	y *FieldElement
 }
 
-func NewPoint(x, y, a, b Number) *Point {
+func NewPoint(x, y, a, b *FieldElement) *Point {
 	if y.Pow(big.NewInt(2)).NotEqual(x.Pow(big.NewInt(3)).Add(a.Mul(x)).Add(b)) {
 		panic("point not on curve")
 	}
@@ -28,8 +28,16 @@ func NewPointCopy(p *Point) *Point {
 	return NewPoint(x1, y1, a1, b1)
 }
 
-func NewInf(a, b Number) *Point {
+func NewInf(a, b *FieldElement) *Point {
 	return &Point{x: nil, y: nil, a: a, b: b}
+}
+
+func (p *Point) X() *FieldElement {
+	return p.x
+}
+
+func (p *Point) Y() *FieldElement {
+	return p.y
 }
 
 func (p *Point) String() string {
