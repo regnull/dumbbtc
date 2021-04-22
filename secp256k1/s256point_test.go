@@ -16,14 +16,9 @@ func Test_SignAndVerify(t *testing.T) {
 	z := new(big.Int).SetBytes(hash256([]byte("my message")))
 	fmt.Printf("%064x\n", z)
 
-	//k := big.NewInt(1234567890)
-
 	key := NewPrivateKey(e)
-	// key := NewRandomPrivateKey()
 	public := key.GetPublicKey()
 	sig := key.Sign(z)
-	fmt.Printf("%s\n", sig.String())
-	//assert.True(true)
 	assert.True(sig.Verify(z, public))
 }
 

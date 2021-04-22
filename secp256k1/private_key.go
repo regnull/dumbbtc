@@ -35,16 +35,14 @@ func (key *PrivateKey) GetPublicKey() *PublicKey {
 }
 
 func (key *PrivateKey) Sign(z *big.Int) *Signature {
-	//k := generateRandomPoint()
-	k := big.NewInt(1234567890)
+	k := generateRandomPoint()
 	r := CurveParams.G.Mul(k).X().Num()
 	kInv := Inverse(k)
-	fmt.Printf("kInv: %x\n", kInv)
 	s := new(big.Int).Mul(
 		(new(big.Int).Add(z,
 			new(big.Int).Mul(r, key.secret))), kInv)
 	s = s.Mod(s, CurveParams.N)
-	fmt.Printf("s: %x\n", s)
+	// ?????
 	// if new(big.Int).Div(CurveParams.N, big.NewInt(2)).Cmp(s) < 0 {
 	// 	s.Sub(CurveParams.N, s)
 	// }
