@@ -2,7 +2,6 @@ package secp256k1
 
 import (
 	"crypto/sha256"
-	"fmt"
 	"math/big"
 	"testing"
 
@@ -14,7 +13,6 @@ func Test_SignAndVerify(t *testing.T) {
 
 	e := new(big.Int).SetBytes(hash256([]byte("my secret")))
 	z := new(big.Int).SetBytes(hash256([]byte("my message")))
-	fmt.Printf("%064x\n", z)
 
 	key := NewPrivateKey(e)
 	public := key.GetPublicKey()
